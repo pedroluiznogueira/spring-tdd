@@ -58,4 +58,23 @@ public class EmployeeRepositoryTest {
         assertThat(persistedEmployees.size()).usingRecursiveComparison().isEqualTo(2);
     }
 
+    @Test
+    public void givenEmployeeId_whenFindById_thenReturnPersistedEmployeeById() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final Long persistedEmployeeId = persistedEmployee.getId();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findById(persistedEmployeeId).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+
+        // then
+        assertThat(foundEmployee).usingRecursiveComparison().isNotNull();
+        assertThat(foundEmployee.getId()).usingRecursiveComparison().isEqualTo(persistedEmployee.getId());
+    }
+
 }
