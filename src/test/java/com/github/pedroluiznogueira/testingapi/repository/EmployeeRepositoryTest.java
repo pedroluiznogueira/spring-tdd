@@ -29,7 +29,7 @@ public class EmployeeRepositoryTest {
         final Employee persistedEmployee = employeeRepository.save(employee);
 
         // then
-        assertThat(persistedEmployee).isNotNull();
+        assertThat(persistedEmployee).usingRecursiveComparison().isNotNull();
         assertThat(persistedEmployee.getId()).isGreaterThan(0);
     }
 
@@ -54,8 +54,8 @@ public class EmployeeRepositoryTest {
         final List<Employee> persistedEmployees = employeeRepository.findAll();
 
         // then
-        assertThat(persistedEmployees).isNotNull();
-        assertThat(persistedEmployees.size()).isEqualTo(3);
+        assertThat(persistedEmployees).usingRecursiveComparison().isNotNull();
+        assertThat(persistedEmployees.size()).usingRecursiveComparison().isEqualTo(2);
     }
 
 }
