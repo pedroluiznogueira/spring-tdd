@@ -101,4 +101,30 @@ public class EmployeeRepositoryTest {
         assertThat(foundEmployee.getEmail()).isEqualTo(persistedEmployeeEmail);
     }
 
+    @Test
+    @DisplayName("update()")
+    public void givenEmployee_whenUpdate_thenReturnUpdatedEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+
+        // when
+        final Employee foundEmployee = employeeRepository.findById(persistedEmployee.getId()).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        final Employee foundEmployeeUpdated = Employee.builder()
+                .id(foundEmployee.getId())
+                .firstName("Jocko")
+                .secondName(persistedEmployee.getSecondName())
+                .email(persistedEmployee.getEmail())
+                .build();
+        final Employee updatedEmployee = employeeRepository.save(foundEmployeeUpdated);
+
+        // then
+        assertThat(updatedEmployee).usingRecursiveComparison().isNotNull();
+        assertThat(updatedEmployee.getId()).usingRecursiveComparison().isEqualTo(persistedEmployee.getId());
+        assertThat(updatedEmployee.getFirstName()).isEqualTo("Jocko");
+    }
 }
