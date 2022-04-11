@@ -1,6 +1,8 @@
 package com.github.pedroluiznogueira.testingapi.repository;
 
 import com.github.pedroluiznogueira.testingapi.model.Employee;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -8,15 +10,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 
+@Slf4j
 @DataJpaTest
 public class EmployeeRepositoryTest {
 
     @Autowired private EmployeeRepository employeeRepository;
 
     @Test
+    @DisplayName("save()")
     public void givenEmployeeObject_whenSave_thenReturnPersistedEmployee() {
         // given
         final Employee employee = Employee.builder()
@@ -34,6 +36,7 @@ public class EmployeeRepositoryTest {
     }
 
     @Test
+    @DisplayName("findAll()")
     public void givenEmployeesList_whenFindAll_thenReturnPersistedEmployees() {
         // given
         final List<Employee> employees = List.of(
@@ -59,6 +62,7 @@ public class EmployeeRepositoryTest {
     }
 
     @Test
+    @DisplayName("findById()")
     public void givenEmployeeId_whenFindById_thenReturnPersistedEmployeeById() {
         // given
         final Employee employee = Employee.builder()
@@ -75,6 +79,26 @@ public class EmployeeRepositoryTest {
         // then
         assertThat(foundEmployee).usingRecursiveComparison().isNotNull();
         assertThat(foundEmployee.getId()).usingRecursiveComparison().isEqualTo(persistedEmployee.getId());
+    }
+
+    @Test
+    @DisplayName("findByEmail()")
+    public void givenEmployeeEmail_whenFindByEmail_thenReturnPersistedEmployeeByEmail() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final String persistedEmployeeEmail = persistedEmployee.getEmail();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findByEmail(persistedEmployeeEmail).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given email"));
+
+        // then
+        assertThat(foundEmployee).usingRecursiveComparison().isNotNull();
+        assertThat(foundEmployee.getEmail()).isEqualTo(persistedEmployeeEmail);
     }
 
 }
