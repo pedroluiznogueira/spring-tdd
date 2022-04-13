@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -126,5 +127,25 @@ public class EmployeeRepositoryTest {
         assertThat(updatedEmployee).usingRecursiveComparison().isNotNull();
         assertThat(updatedEmployee.getId()).usingRecursiveComparison().isEqualTo(persistedEmployee.getId());
         assertThat(updatedEmployee.getFirstName()).isEqualTo("Jocko");
+    }
+
+    @Test
+    @DisplayName("delete()")
+    public void givenEmployeeId_whenDeleteById_thenRemoveEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+
+        // when
+        final Employee foundEmployee = employeeRepository.findById(persistedEmployee.getId()).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        employeeRepository.deleteById(foundEmployee.getId());
+        final Optional<Employee> notFoundEmployee = employeeRepository.findById(persistedEmployee.getId());
+
+        // then
+        assertThat(notFoundEmployee).isEmpty();
     }
 }
