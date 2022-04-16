@@ -14,6 +14,9 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(final Employee employee) {
+        employeeRepository.findByEmail(employee.getEmail()).ifPresent(foundEmployee -> {
+            throw new IllegalArgumentException("unable to create employee, the given email already exists");
+        });
         return employeeRepository.save(employee);
     }
 }
