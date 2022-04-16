@@ -104,4 +104,59 @@ public class EmployeeServiceTest {
         assertThat(retrievedEmployees.size()).isEqualTo(employees.size());
     }
 
+    @Test
+    @DisplayName("get employees empty")
+    public void givenEmptyEmployees_whenGetEmployees_thenReturnEmptyEmployees() {
+        // given
+        final List<Employee> employees = List.of();
+        when(employeeRepository.findAll()).thenReturn(employees);
+
+        // when
+        final List<Employee> retrievedEmployees = employeeService.getEmployees();
+
+        // then
+        assertThat(retrievedEmployees).isNotNull();
+        assertThat(retrievedEmployees.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("find employe by id")
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
+
+        // when
+        final Employee foundEmployee = employeeService.getEmployeeById(employee.getId());
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getId()).isEqualTo(employee.getId());
+        assertThat(foundEmployee).usingRecursiveComparison().ignoringFields("id").isEqualTo(employee);
+    }
+
+    @Test
+    @DisplayName("find employe by id not found")
+    public void givenEmployeeId_whenGetEmployeeById_thenThrowEmployeeNotFound() {
+        // given
+        final Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        when(employeeRepository.findById(employee.getId())).thenReturn(Optional.empty());
+
+        // when
+        final Executable lambda = () -> employeeService.getEmployeeById(employee.getId());
+
+        // then
+        assertThrows(IllegalArgumentException.class, lambda);
+        verify(employeeRepository, times(1)).findById(employee.getId());
+    }
 }

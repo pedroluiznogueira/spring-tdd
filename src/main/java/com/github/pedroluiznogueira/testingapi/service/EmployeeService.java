@@ -25,4 +25,8 @@ public class EmployeeService {
     public List<Employee> getEmployees() {
         return employeeRepository.findAll();
     }
+
+    public Employee getEmployeeById(final Long id) {
+        return employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+    }
 }
