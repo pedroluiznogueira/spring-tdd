@@ -148,4 +148,92 @@ public class EmployeeRepositoryTest {
         // then
         assertThat(notFoundEmployee).isEmpty();
     }
+
+    @Test
+    @DisplayName("jpql()")
+    public void givenEmployeeFirstNameAndSecondName_whenFindByJPQL_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final String firstName = persistedEmployee.getFirstName();
+        final String secondName = persistedEmployee.getSecondName();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findByJPQL(firstName, secondName).orElseThrow(() -> new IllegalArgumentException("unable to find employe with the given first and second names"));
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getFirstName()).isEqualTo(firstName);
+        assertThat(foundEmployee.getSecondName()).isEqualTo(secondName);
+    }
+
+    @Test
+    @DisplayName("jpqlNamedParams()")
+    public void givenEmployeeFirstNameAndSecondName_whenFindByJPQLNamedParams_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final String firstName = persistedEmployee.getFirstName();
+        final String secondName = persistedEmployee.getSecondName();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findByJPQLNamedParams(firstName, secondName).orElseThrow(() -> new IllegalArgumentException("unable to find employe with the given first and second names"));
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getFirstName()).isEqualTo(firstName);
+        assertThat(foundEmployee.getSecondName()).isEqualTo(secondName);
+    }
+
+    @Test
+    @DisplayName("nativeQuery()")
+    public void givenEmployeeFirstNameAndSecondName_whenFindByNativeQuery_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final String firstName = persistedEmployee.getFirstName();
+        final String secondName = persistedEmployee.getSecondName();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findByNativeQuery(firstName, secondName).orElseThrow(() -> new IllegalArgumentException("unable to find employe with the given first and second names"));
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getFirstName()).isEqualTo(firstName);
+        assertThat(foundEmployee.getSecondName()).isEqualTo(secondName);
+    }
+
+    @Test
+    @DisplayName("nativeQuery()")
+    public void givenEmployeeFirstNameAndSecondName_whenFindByNativeQueryNamedParams_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee persistedEmployee = employeeRepository.save(employee);
+        final String firstName = persistedEmployee.getFirstName();
+        final String secondName = persistedEmployee.getSecondName();
+
+        // when
+        final Employee foundEmployee = employeeRepository.findByNativeQueryNamedParams(firstName, secondName).orElseThrow(() -> new IllegalArgumentException("unable to find employe with the given first and second names"));
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getFirstName()).isEqualTo(firstName);
+        assertThat(foundEmployee.getSecondName()).isEqualTo(secondName);
+    }
 }
