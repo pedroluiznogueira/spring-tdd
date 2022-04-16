@@ -20,7 +20,7 @@ public class EmployeeRepositoryTest {
 
     @Test
     @DisplayName("save()")
-    public void givenEmployeeObject_whenSave_thenReturnPersistedEmployee() {
+    public void givenEmployee_whenSave_thenReturnPersistedEmployee() {
         // given
         final Employee employee = Employee.builder()
                 .firstName("John")
