@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -56,8 +57,8 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    @DisplayName("create employe when it already exists")
-    public void givenEmployee_whenCreateEmployee_thenThrowEmployeeAlreadyExists() {
+    @DisplayName("create employe when email already exists")
+    public void givenEmployee_whenCreateEmployee_thenThrowEmailAlreadyExists() {
         // given
         final Employee employee = Employee.builder()
                 .id(1L)
@@ -73,6 +74,34 @@ public class EmployeeServiceTest {
         // then
         assertThrows(IllegalArgumentException.class, lambda);
         verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    @DisplayName("get employees")
+    public void givenEmployees_whenGetEmployees_thenReturnEmployees() {
+        // given
+        final Employee firstEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee secondEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final List<Employee> employees = List.of(firstEmployee, secondEmployee);
+
+        when(employeeRepository.findAll()).thenReturn(employees);
+
+        // when
+        final List<Employee> retrievedEmployees = employeeService.getEmployees();
+
+        // then
+        assertThat(retrievedEmployees).isNotNull();
+        assertThat(retrievedEmployees.size()).isEqualTo(employees.size());
     }
 
 }

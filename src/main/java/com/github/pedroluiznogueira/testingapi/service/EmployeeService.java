@@ -4,6 +4,8 @@ import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeService {
 
@@ -18,5 +20,9 @@ public class EmployeeService {
             throw new IllegalArgumentException("unable to create employee, the given email already exists");
         });
         return employeeRepository.save(employee);
+    }
+
+    public List<Employee> getEmployees() {
+        return employeeRepository.findAll();
     }
 }
