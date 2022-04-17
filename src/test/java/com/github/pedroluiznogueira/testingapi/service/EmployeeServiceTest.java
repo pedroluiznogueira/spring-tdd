@@ -1,5 +1,7 @@
 package com.github.pedroluiznogueira.testingapi.service;
 
+import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
+import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.repository.EmployeeRepository;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
@@ -75,7 +77,7 @@ public class EmployeeServiceTest {
         final Executable executable = () -> employeeService.createEmployee(employee);
 
         // then
-        assertThrows(IllegalArgumentException.class, executable);
+        assertThrows(ResourceAlreadyExistException.class, executable);
         verify(employeeRepository, never()).save(any(Employee.class));
     }
 
@@ -159,7 +161,7 @@ public class EmployeeServiceTest {
         final Executable executable = () -> employeeService.getEmployeeById(employee.getId());
 
         // then
-        assertThrows(IllegalArgumentException.class, executable);
+        assertThrows(ResourceNotFoundException.class, executable);
         verify(employeeRepository, times(1)).findById(employee.getId());
     }
 
@@ -214,7 +216,7 @@ public class EmployeeServiceTest {
         final Executable executable = () -> employeeService.updateEmployee(employeeData);
 
         // then
-        assertThrows(IllegalArgumentException.class, executable);
+        assertThrows(ResourceNotFoundException.class, executable);
         verify(employeeRepository, never()).save(any(Employee.class));
     }
 
@@ -250,7 +252,7 @@ public class EmployeeServiceTest {
         final Executable executable = () -> employeeService.deleteEmployee(id);
 
         // then
-        assertThrows(IllegalArgumentException.class, executable);
+        assertThrows(ResourceNotFoundException.class, executable);
         verify(employeeRepository, never()).delete(any(Employee.class));
     }
 

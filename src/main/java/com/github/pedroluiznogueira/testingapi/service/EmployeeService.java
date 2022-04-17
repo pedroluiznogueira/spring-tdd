@@ -1,5 +1,7 @@
 package com.github.pedroluiznogueira.testingapi.service;
 
+import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
+import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -45,12 +47,12 @@ public class EmployeeService {
     }
 
     private Employee getEmployee(final Long id) {
-        return employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee", "id", id.toString()));
     }
 
     private void checkIfEmailExists(final Employee employee) {
         employeeRepository.findByEmail(employee.getEmail()).ifPresent((foundEmployee) -> {
-            throw new IllegalArgumentException("unable to create employee, the given email already exists");
+            throw new ResourceAlreadyExistException("Employee", "email", employee.getEmail());
         });
     }
 }
