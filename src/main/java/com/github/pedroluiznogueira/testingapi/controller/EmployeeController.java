@@ -21,7 +21,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee createEmployee(@RequestBody Employee employee) {
+    public Employee createEmployee(@RequestBody final Employee employee) {
         return employeeService.createEmployee(employee);
     }
 
@@ -33,7 +33,19 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee getEmployeeById(@PathVariable ("id") Long id) {
+    public Employee getEmployeeById(@PathVariable ("id") final Long id) {
         return employeeService.getEmployeeById(id);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Employee updateEmployee(@RequestBody final Employee employee) {
+        return employeeService.updateEmployee(employee);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteEmployee(@PathVariable ("id") final Long id) {
+        employeeService.deleteEmployee(id);
     }
 }

@@ -22,8 +22,7 @@ import static com.github.pedroluiznogueira.testingapi.controller.support.Control
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -180,5 +179,75 @@ public class EmployeeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath(MESSAGE, is(expectedError.getMessage())))
                 .andExpect(jsonPath(DETAIL, is(expectedError.getDetail())));
+    }
+
+    @Test
+    @DisplayName("update employee")
+    public void givenEmployeeData_whenUpdateEmployee_thenReturnUpdatedEmployee() throws Exception {
+        // given
+        final Employee receivedEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Willick")
+                .email("johnwillick@johnwillick.com")
+                .build();
+        final Employee returnEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Willick")
+                .email("johnwillick@johnwillick.com")
+                .build();
+        when(employeeService.updateEmployee(receivedEmployee)).thenReturn(returnEmployee);
+        final String body = objectMapper.writeValueAsString(receivedEmployee);
+
+        // when
+        final ResultActions response = mockMvc.perform(put(EMPLOYEES_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(FIRST_NAME, is(receivedEmployee.getFirstName())))
+                .andExpect(jsonPath(SECOND_NAME, is(receivedEmployee.getSecondName())))
+                .andExpect(jsonPath(EMAIL, is(receivedEmployee.getEmail())));
+    }
+
+    @Test
+    @DisplayName("update employee not found")
+    public void givenEmployeeData_whenUpdateEmployee_thenThrowEmployeeNotFound() throws Exception {
+        // given
+        final Long id = 1L;
+        final Error expectedError = Error.builder()
+                .message("Employee not found with id : '1'")
+                .detail("uri=/api/employees")
+                .build();
+        when(employeeService.updateEmployee(any(Employee.class))).thenThrow(new ResourceNotFoundException("Employee", "id", id.toString()));
+        final String body = objectMapper.writeValueAsString(Employee.builder().build());
+
+        // when
+        final ResultActions response = mockMvc.perform(put(EMPLOYEES_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(MESSAGE, is(expectedError.getMessage())))
+                .andExpect(jsonPath(DETAIL, is(expectedError.getDetail())));
+    }
+
+    @Test
+    @DisplayName("delete employee")
+    public void givenEmployeeId_whenDeleteEmployee_thenRemoveEmployee() throws Exception {
+        // given
+        final Long id = 1L;
+
+        // when
+        final ResultActions response = mockMvc.perform(delete(EMPLOYEES_URI + "/" + id));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk());
     }
 }
