@@ -72,10 +72,10 @@ public class EmployeeServiceTest {
         when(employeeRepository.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
 
         // when
-        final Executable lambda = () -> employeeService.createEmployee(employee);
+        final Executable executable = () -> employeeService.createEmployee(employee);
 
         // then
-        assertThrows(IllegalArgumentException.class, lambda);
+        assertThrows(IllegalArgumentException.class, executable);
         verify(employeeRepository, never()).save(any(Employee.class));
     }
 
@@ -156,10 +156,10 @@ public class EmployeeServiceTest {
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.empty());
 
         // when
-        final Executable lambda = () -> employeeService.getEmployeeById(employee.getId());
+        final Executable executable = () -> employeeService.getEmployeeById(employee.getId());
 
         // then
-        assertThrows(IllegalArgumentException.class, lambda);
+        assertThrows(IllegalArgumentException.class, executable);
         verify(employeeRepository, times(1)).findById(employee.getId());
     }
 
@@ -211,10 +211,10 @@ public class EmployeeServiceTest {
         when(employeeRepository.findById(employeeData.getId())).thenReturn(Optional.empty());
 
         // when
-        final Executable lambda = () -> employeeService.updateEmployee(employeeData);
+        final Executable executable = () -> employeeService.updateEmployee(employeeData);
 
         // then
-        assertThrows(IllegalArgumentException.class, lambda);
+        assertThrows(IllegalArgumentException.class, executable);
         verify(employeeRepository, never()).save(any(Employee.class));
     }
 
@@ -247,10 +247,10 @@ public class EmployeeServiceTest {
         when(employeeRepository.findById(id)).thenReturn(Optional.empty());
 
         // when
-        final Executable lambda = () -> employeeService.deleteEmployee(id);
+        final Executable executable = () -> employeeService.deleteEmployee(id);
 
         // then
-        assertThrows(IllegalArgumentException.class, lambda);
+        assertThrows(IllegalArgumentException.class, executable);
         verify(employeeRepository, never()).delete(any(Employee.class));
     }
 
