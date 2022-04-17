@@ -1,6 +1,5 @@
 package com.github.pedroluiznogueira.testingapi.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.github.pedroluiznogueira.testingapi.controller.support.ControllerSupport.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -65,5 +63,27 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath(FIRST_NAME, is(employee.getFirstName())))
                 .andExpect(jsonPath(SECOND_NAME, is(employee.getSecondName())))
                 .andExpect(jsonPath(EMAIL, is(employee.getEmail())));
+    }
+
+    @Test
+    @DisplayName("create employee email already exist")
+    public void givenEmployee_whenCreateEmployee_ThenThrowEmployeeAlreadyExist() throws Exception {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName("John")
+                .secondName("Willick")
+                .email("johnwillick@johnwillick.com")
+                .build();
+        when(employeeService.createEmployee(employee)).thenThrow(new ResourceAlreadyExistException("Employee", "email", employee.getEmail()));
+        final String body = objectMapper.writeValueAsString(employee);
+
+        // when
+        final ResultActions response = mockMvc.perform(post(EMPLOYEES_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
