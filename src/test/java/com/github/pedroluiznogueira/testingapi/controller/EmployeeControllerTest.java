@@ -87,12 +87,11 @@ public class EmployeeControllerTest {
         final ResultActions response = mockMvc.perform(post(EMPLOYEES_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body));
-        final String json = response.andReturn().getResponse().getContentAsString();
-        final Error error = objectMapper.readValue(json, Error.class);
 
         // then
-        response.andDo(print()).andExpect(status().isBadRequest());
-        assertThat(error.getTimestamp()).isNotNull();
-        assertThat(error).usingRecursiveComparison().ignoringFields("timestamp").isEqualTo(expectedError);
+        response.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(MESSAGE, is(expectedError.getMessage())))
+                .andExpect(jsonPath(DETAIL, is(expectedError.getDetail())));
     }
 }
