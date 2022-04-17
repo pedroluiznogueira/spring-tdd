@@ -30,4 +30,10 @@ public class EmployeeController {
     public List<Employee> getEmployees() {
         return employeeService.getEmployees();
     }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Employee getEmployeeById(@PathVariable ("id") Long id) {
+        return employeeService.getEmployeeById(id);
+    }
 }

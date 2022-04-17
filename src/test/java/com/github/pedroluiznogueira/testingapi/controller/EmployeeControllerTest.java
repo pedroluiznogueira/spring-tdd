@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
@@ -132,6 +133,30 @@ public class EmployeeControllerTest {
         // then
         response.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(SIZE, is(employees.size())));
+                .andExpect(jsonPath(SIZE, is(0)));
+    }
+
+    @Test
+    @DisplayName("get employees empty")
+    public void givenEmployeeId_whenGetEmployeeById_ThenReturnEmployee() throws Exception {
+        // given
+        final Long id = 1L;
+        final Employee returnEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Willick")
+                .email("johnwillick@johnwillick.com")
+                .build();
+        when(employeeService.getEmployeeById(id)).thenReturn(returnEmployee);
+
+        // when
+        final ResultActions response = mockMvc.perform(get(EMPLOYEES_URI + "/" + id));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(FIRST_NAME, is("John")))
+                .andExpect(jsonPath(SECOND_NAME, is("Willick")))
+                .andExpect(jsonPath(EMAIL, is("johnwillick@johnwillick.com")));
     }
 }
