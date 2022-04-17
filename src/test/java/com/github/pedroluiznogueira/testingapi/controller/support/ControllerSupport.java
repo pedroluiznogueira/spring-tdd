@@ -12,4 +12,7 @@ public class ControllerSupport {
     // error fields
     public static final String MESSAGE = "$.message";
     public static final String DETAIL = "$.detail";
+
+    // list
+    public static final String SIZE = "$.size()";
 }

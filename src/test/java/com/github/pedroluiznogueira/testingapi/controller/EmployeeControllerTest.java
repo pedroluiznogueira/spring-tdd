@@ -14,12 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+
 import static com.github.pedroluiznogueira.testingapi.controller.support.ControllerSupport.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,5 +95,27 @@ public class EmployeeControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath(MESSAGE, is(expectedError.getMessage())))
                 .andExpect(jsonPath(DETAIL, is(expectedError.getDetail())));
+    }
+
+    @Test
+    @DisplayName("get employees")
+    public void givenEmployees_whenGetEmployees_ThenReturnEmployees() throws Exception {
+        // given
+        final Employee employee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Willick")
+                .email("johnwillick@johnwillick.com")
+                .build();
+        final List<Employee> employees = List.of(employee);
+        when(employeeService.getEmployees()).thenReturn(employees);
+
+        // when
+        final ResultActions response = mockMvc.perform(get(EMPLOYEES_URI));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(SIZE, is(employees.size())));
     }
 }
