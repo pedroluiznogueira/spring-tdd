@@ -218,4 +218,25 @@ public class EmployeeServiceTest {
         verify(employeeRepository, never()).save(any(Employee.class));
     }
 
+    @Test
+    @DisplayName("delete employee")
+    public void givenEmployeId_whenDeleteEmployee_thenRemoveEmployee() {
+        // given
+        final Long id = 1L;
+        final Employee returnEmployee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(returnEmployee));
+
+        // when
+        employeeService.deleteEmployee(id);
+
+        // then
+        verify(employeeRepository, times(1)).delete(any(Employee.class));
+        verify(employeeRepository, times(1)).findById(any(Long.class));
+    }
+
 }

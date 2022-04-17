@@ -40,4 +40,9 @@ public class EmployeeService {
                 .build();
         return employeeRepository.save(employeeDataToUpdate);
     }
+
+    public void deleteEmployee(final Long id) {
+        final Employee employeeToDelete = employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        employeeRepository.delete(employeeToDelete);
+    }
 }
