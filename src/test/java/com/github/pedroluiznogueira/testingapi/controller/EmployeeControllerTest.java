@@ -2,6 +2,7 @@ package com.github.pedroluiznogueira.testingapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
+import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.exception.error.Error;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.service.EmployeeService;
@@ -41,7 +42,7 @@ public class EmployeeControllerTest {
 
     @Test
     @DisplayName("create employee")
-    public void givenEmployee_whenCreateEmployee_ThenReturnCreatedEmployee() throws Exception {
+    public void givenEmployee_whenCreateEmployee_thenReturnCreatedEmployee() throws Exception {
         // given
         final Employee employee = Employee.builder()
                 .firstName("John")
@@ -72,7 +73,7 @@ public class EmployeeControllerTest {
 
     @Test
     @DisplayName("create employee email already exist")
-    public void givenEmployee_whenCreateEmployee_ThenThrowEmployeeAlreadyExist() throws Exception {
+    public void givenEmployee_whenCreateEmployee_thenThrowEmployeeAlreadyExist() throws Exception {
         // given
         final Employee employee = Employee.builder()
                 .firstName("John")
@@ -100,7 +101,7 @@ public class EmployeeControllerTest {
 
     @Test
     @DisplayName("get employees")
-    public void givenEmployees_whenGetEmployees_ThenReturnEmployees() throws Exception {
+    public void givenEmployees_whenGetEmployees_thenReturnEmployees() throws Exception {
         // given
         final Employee employee = Employee.builder()
                 .id(1L)
@@ -122,7 +123,7 @@ public class EmployeeControllerTest {
 
     @Test
     @DisplayName("get employees empty")
-    public void givenNoEmployees_whenGetEmployees_ThenReturnNoEmployees() throws Exception {
+    public void givenNoEmployees_whenGetEmployees_thenReturnNoEmployees() throws Exception {
         // given
         final List<Employee> employees = List.of();
         when(employeeService.getEmployees()).thenReturn(employees);
@@ -137,8 +138,8 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    @DisplayName("get employees empty")
-    public void givenEmployeeId_whenGetEmployeeById_ThenReturnEmployee() throws Exception {
+    @DisplayName("get employee by id")
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployee() throws Exception {
         // given
         final Long id = 1L;
         final Employee returnEmployee = Employee.builder()
@@ -158,5 +159,26 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath(FIRST_NAME, is("John")))
                 .andExpect(jsonPath(SECOND_NAME, is("Willick")))
                 .andExpect(jsonPath(EMAIL, is("johnwillick@johnwillick.com")));
+    }
+
+    @Test
+    @DisplayName("get employee by id not found")
+    public void givenEmployeeId_whenGetEmployeeById_thenThrowEmployeeNotFound() throws Exception {
+        // given
+        final Long id = 1L;
+        final Error expectedError = Error.builder()
+                .message("Employee not found with id : '1'")
+                .detail("uri=/api/employees/1")
+                .build();
+        when(employeeService.getEmployeeById(id)).thenThrow(new ResourceNotFoundException("Employee", "id", id.toString()));
+
+        // when
+        final ResultActions response = mockMvc.perform(get(EMPLOYEES_URI + "/" + id));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(MESSAGE, is(expectedError.getMessage())))
+                .andExpect(jsonPath(DETAIL, is(expectedError.getDetail())));
     }
 }
