@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  db:
+    container_name: mysqldb
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_ROOT_PASSWORD=unroot
+    ports:
+      - 3309:3306
+    volumes:
+      - ${HOME}/blog:/var/lib/mysql/
