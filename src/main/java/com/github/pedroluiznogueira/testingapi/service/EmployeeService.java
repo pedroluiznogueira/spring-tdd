@@ -29,4 +29,15 @@ public class EmployeeService {
     public Employee getEmployeeById(final Long id) {
         return employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
     }
+
+    public Employee updateEmployee(final Employee employeeData) {
+        final Employee employeeToUpdate = employeeRepository.findById(employeeData.getId()).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        final Employee employeeDataToUpdate = Employee.builder()
+                .id(employeeToUpdate.getId())
+                .firstName(employeeData.getFirstName())
+                .secondName(employeeData.getSecondName())
+                .email(employeeData.getEmail())
+                .build();
+        return employeeRepository.save(employeeDataToUpdate);
+    }
 }

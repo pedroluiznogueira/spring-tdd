@@ -9,7 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.repository.support.EntityManagerBeanDefinitionRegistrarPostProcessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -158,5 +161,40 @@ public class EmployeeServiceTest {
         // then
         assertThrows(IllegalArgumentException.class, lambda);
         verify(employeeRepository, times(1)).findById(employee.getId());
+    }
+
+    @Test
+    @DisplayName("update employee")
+    public void givenEmployeeIdAndEmployeData_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        // given
+        final Employee employeeData = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        final Employee employeeToUpdate = spy(Employee.builder()
+                .id(1L)
+                .firstName("Jocko")
+                .secondName("Willick")
+                .email("jockowillick@jockowillick.com")
+                .build());
+        final Employee employeeDataToUpdate = Employee.builder()
+                .id(employeeToUpdate.getId())
+                .firstName(employeeData.getFirstName())
+                .secondName(employeeData.getSecondName())
+                .email(employeeData.getEmail())
+                .build();
+        when(employeeRepository.findById(employeeData.getId())).thenReturn(Optional.of(employeeToUpdate));
+        when(employeeRepository.save(employeeDataToUpdate)).thenReturn(employeeDataToUpdate);
+
+        // when
+        final Employee updatedEmployee = employeeService.updateEmployee(employeeDataToUpdate);
+
+        // then
+        assertThat(updatedEmployee).isNotNull();
+        assertThat(updatedEmployee.getId()).isEqualTo(employeeToUpdate.getId());
+        assertThat(updatedEmployee).usingRecursiveComparison().ignoringFields("id").isNotEqualTo(employeeToUpdate);
+        verify(employeeToUpdate, times(3)).getId();
     }
 }
