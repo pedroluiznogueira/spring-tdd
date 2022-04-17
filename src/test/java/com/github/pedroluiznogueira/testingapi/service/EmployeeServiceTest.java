@@ -165,7 +165,7 @@ public class EmployeeServiceTest {
 
     @Test
     @DisplayName("update employee")
-    public void givenEmployeeIdAndEmployeData_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+    public void givenEmployeData_whenUpdateEmployee_thenReturnUpdatedEmployee() {
         // given
         final Employee employeeData = Employee.builder()
                 .id(1L)
@@ -197,4 +197,25 @@ public class EmployeeServiceTest {
         assertThat(updatedEmployee).usingRecursiveComparison().ignoringFields("id").isNotEqualTo(employeeToUpdate);
         verify(employeeToUpdate, times(3)).getId();
     }
+
+    @Test
+    @DisplayName("update employee not found")
+    public void givenEmployeData_whenUpdateEmployee_thenThrowEmployeeNotFound() {
+        // given
+        final Employee employeeData = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .secondName("Wick")
+                .email("johnwick@johnwick.com")
+                .build();
+        when(employeeRepository.findById(employeeData.getId())).thenReturn(Optional.empty());
+
+        // when
+        final Executable lambda = () -> employeeService.updateEmployee(employeeData);
+
+        // then
+        assertThrows(IllegalArgumentException.class, lambda);
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
 }
