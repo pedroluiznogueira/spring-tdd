@@ -239,4 +239,19 @@ public class EmployeeServiceTest {
         verify(employeeRepository, times(1)).findById(any(Long.class));
     }
 
+    @Test
+    @DisplayName("delete employee")
+    public void givenEmployeId_whenDeleteEmployee_thenThrowEmployeeNotFound() {
+        // given
+        final Long id = 1L;
+        when(employeeRepository.findById(id)).thenReturn(Optional.empty());
+
+        // when
+        final Executable lambda = () -> employeeService.deleteEmployee(id);
+
+        // then
+        assertThrows(IllegalArgumentException.class, lambda);
+        verify(employeeRepository, never()).delete(any(Employee.class));
+    }
+
 }

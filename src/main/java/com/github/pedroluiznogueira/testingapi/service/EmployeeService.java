@@ -16,9 +16,7 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(final Employee employee) {
-        employeeRepository.findByEmail(employee.getEmail()).ifPresent(foundEmployee -> {
-            throw new IllegalArgumentException("unable to create employee, the given email already exists");
-        });
+        checkIfEmailExists(employee);
         return employeeRepository.save(employee);
     }
 
@@ -27,11 +25,11 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(final Long id) {
-        return employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        return getEmployee(id);
     }
 
     public Employee updateEmployee(final Employee employeeData) {
-        final Employee employeeToUpdate = employeeRepository.findById(employeeData.getId()).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        final Employee employeeToUpdate = getEmployee(employeeData.getId());
         final Employee employeeDataToUpdate = Employee.builder()
                 .id(employeeToUpdate.getId())
                 .firstName(employeeData.getFirstName())
@@ -42,7 +40,17 @@ public class EmployeeService {
     }
 
     public void deleteEmployee(final Long id) {
-        final Employee employeeToDelete = employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+        final Employee employeeToDelete = getEmployee(id);
         employeeRepository.delete(employeeToDelete);
+    }
+
+    private Employee getEmployee(final Long id) {
+        return employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("unable to find employee with the given id"));
+    }
+
+    private void checkIfEmailExists(final Employee employee) {
+        employeeRepository.findByEmail(employee.getEmail()).ifPresent((foundEmployee) -> {
+            throw new IllegalArgumentException("unable to create employee, the given email already exists");
+        });
     }
 }
