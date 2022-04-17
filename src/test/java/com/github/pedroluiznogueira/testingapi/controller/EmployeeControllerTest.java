@@ -118,4 +118,20 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(SIZE, is(employees.size())));
     }
+
+    @Test
+    @DisplayName("get employees empty")
+    public void givenNoEmployees_whenGetEmployees_ThenReturnNoEmployees() throws Exception {
+        // given
+        final List<Employee> employees = List.of();
+        when(employeeService.getEmployees()).thenReturn(employees);
+
+        // when
+        final ResultActions response = mockMvc.perform(get(EMPLOYEES_URI));
+
+        // then
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(SIZE, is(employees.size())));
+    }
 }
