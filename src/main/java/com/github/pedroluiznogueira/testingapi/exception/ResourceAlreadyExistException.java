@@ -2,9 +2,12 @@ package com.github.pedroluiznogueira.testingapi.exception;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ResourceAlreadyExistException extends RuntimeException {
     String resourceName;
     String fieldName;
