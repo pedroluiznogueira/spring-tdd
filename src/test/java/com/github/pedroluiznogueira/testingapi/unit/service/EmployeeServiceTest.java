@@ -1,9 +1,10 @@
-package com.github.pedroluiznogueira.testingapi.service;
+package com.github.pedroluiznogueira.testingapi.unit.service;
 
 import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
 import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.repository.EmployeeRepository;
+import com.github.pedroluiznogueira.testingapi.service.EmployeeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.github.pedroluiznogueira.testingapi.controller;
+package com.github.pedroluiznogueira.testingapi.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
@@ -14,11 +14,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.List;
 
-import static com.github.pedroluiznogueira.testingapi.controller.support.ControllerSupport.*;
+import static com.github.pedroluiznogueira.testingapi.support.ControllerSupport.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

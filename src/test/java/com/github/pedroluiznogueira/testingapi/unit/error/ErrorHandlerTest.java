@@ -1,7 +1,8 @@
-package com.github.pedroluiznogueira.testingapi.exception.error;
+package com.github.pedroluiznogueira.testingapi.unit.error;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pedroluiznogueira.testingapi.exception.ResourceAlreadyExistException;
+import com.github.pedroluiznogueira.testingapi.exception.error.Error;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
 import com.github.pedroluiznogueira.testingapi.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.github.pedroluiznogueira.testingapi.controller.support.ControllerSupport.EMPLOYEES_URI;
+import static com.github.pedroluiznogueira.testingapi.support.ControllerSupport.EMPLOYEES_URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

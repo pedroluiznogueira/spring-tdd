@@ -1,10 +1,11 @@
-package com.github.pedroluiznogueira.testingapi.controller.support;
+package com.github.pedroluiznogueira.testingapi.support;
 
 public class ControllerSupport {
     // employees end-point
     public static final String EMPLOYEES_URI = "/api/employees";
 
     // employee fields
+    public static final String ID = "$.id";
     public static final String FIRST_NAME = "$.firstName";
     public static final String SECOND_NAME = "$.secondName";
     public static final String EMAIL = "$.email";

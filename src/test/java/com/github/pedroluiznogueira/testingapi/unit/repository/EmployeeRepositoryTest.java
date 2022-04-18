@@ -1,6 +1,7 @@
-package com.github.pedroluiznogueira.testingapi.repository;
+package com.github.pedroluiznogueira.testingapi.unit.repository;
 
 import com.github.pedroluiznogueira.testingapi.model.Employee;
+import com.github.pedroluiznogueira.testingapi.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
