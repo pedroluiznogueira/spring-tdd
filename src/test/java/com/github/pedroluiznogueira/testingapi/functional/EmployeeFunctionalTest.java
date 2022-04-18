@@ -1,53 +1,110 @@
 package com.github.pedroluiznogueira.testingapi.functional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.pedroluiznogueira.testingapi.client.EmployeeClient;
-import com.github.pedroluiznogueira.testingapi.client.EmployeeClientBuilder;
+import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
-import org.junit.jupiter.api.BeforeEach;
+import com.github.pedroluiznogueira.testingapi.support.api.EmployeeApiSupport;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.function.Executable;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
+import static com.github.pedroluiznogueira.testingapi.support.ListSupport.generateEmployees;
+import static com.github.pedroluiznogueira.testingapi.support.StringSupport.generate;
+import static com.github.pedroluiznogueira.testingapi.support.api.EmployeeApiSupport.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EmployeeFunctionalTest {
 
-    private ObjectMapper objectMapper;
-    private EmployeeClient employeeClient;
-
-    @BeforeEach
-    public void setup() {
-        EmployeeClientBuilder employeeClientBuilder = new EmployeeClientBuilder();
-        employeeClient = employeeClientBuilder.getEmployeeClient();
-        objectMapper = new ObjectMapper();
-    }
-
     @Test
-    public void httpClient() throws URISyntaxException, IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8080/api/employees"))
-                .GET()
+    public void givenCreateEmployeeRequest_whenCreateEmployee_thenReturnCreatedEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName(generate())
+                .secondName(generate())
+                .email(generate())
                 .build();
 
-        HttpResponse<String> response = HttpClient.newBuilder()
-                .build()
-                .send(request, HttpResponse.BodyHandlers.ofString());
+        // when
+        final Employee createdEmployee = createEmployee(employee);
 
-        final List<Employee> employees = objectMapper.readerForListOf(Employee.class).readValue(response.body());
-        assertThat(employees.size()).isGreaterThan(0);
+        // then
+        assertThat(createdEmployee).isNotNull();
+        assertThat(createdEmployee.getId()).isGreaterThan(0);
     }
 
     @Test
-    public void feignClient() {
-        List<Employee> eemployees = employeeClient.getEmployees();
-        assertThat(eemployees).isNotNull();
+    public void givenGetEmployeesRequest_whenGetEmployees_thenReturnEmployees() {
+        // given
+        final List<Employee> employees = generateEmployees();
+
+        // when
+        employees.forEach(EmployeeApiSupport::createEmployee);
+        final List<Employee> foundEmployees = getEmployees();
+
+        // then
+        assertThat(foundEmployees).isNotNull();
+        assertThat(foundEmployees.size()).isGreaterThanOrEqualTo(employees.size());
+    }
+
+    @Test
+    public void givenGetEmployeeByIdRequest_whenGetEmployeeById_thenReturnEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName(generate())
+                .secondName(generate())
+                .email(generate())
+                .build();
+
+        // when
+        final Employee createdEmployee = createEmployee(employee);
+        final Employee foundEmployee = getEmployeeById(createdEmployee.getId());
+
+        // then
+        assertThat(foundEmployee).isNotNull();
+        assertThat(foundEmployee.getId()).isEqualTo(createdEmployee.getId());
+    }
+
+    @Test
+    public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName(generate())
+                .secondName(generate())
+                .email(generate())
+                .build();
+        final Employee createdEmployee = createEmployee(employee);
+        final Employee employeeToUpdate = Employee.builder()
+                .id(createdEmployee.getId())
+                .firstName(generate())
+                .secondName(generate())
+                .email(generate())
+                .build();
+
+        // when
+        final Employee updatedEmployee = updateEmployee(employeeToUpdate);
+
+        // then
+        assertThat(updatedEmployee).isNotNull();
+        assertThat(updatedEmployee.getId()).isEqualTo(createdEmployee.getId());
+    }
+
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenRemoveEmployee() {
+        // given
+        final Employee employee = Employee.builder()
+                .firstName(generate())
+                .secondName(generate())
+                .email(generate())
+                .build();
+        final Employee createdEmployee = createEmployee(employee);
+
+        // when
+        deleteEmployee(createdEmployee.getId());
+        final Executable executable = () -> getEmployeeById(createdEmployee.getId());
+
+        // then
+        assertThrows(FeignException.BadRequest.class, executable);
     }
 }
