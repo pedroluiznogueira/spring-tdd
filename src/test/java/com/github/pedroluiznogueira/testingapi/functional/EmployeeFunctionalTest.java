@@ -1,8 +1,7 @@
 package com.github.pedroluiznogueira.testingapi.functional;
 
-import com.github.pedroluiznogueira.testingapi.exception.ResourceNotFoundException;
 import com.github.pedroluiznogueira.testingapi.model.Employee;
-import com.github.pedroluiznogueira.testingapi.support.api.EmployeeApiSupport;
+import com.github.pedroluiznogueira.testingapi.client.api.EmployeeApi;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -11,7 +10,7 @@ import java.util.List;
 
 import static com.github.pedroluiznogueira.testingapi.support.ListSupport.generateEmployees;
 import static com.github.pedroluiznogueira.testingapi.support.StringSupport.generate;
-import static com.github.pedroluiznogueira.testingapi.support.api.EmployeeApiSupport.*;
+import static com.github.pedroluiznogueira.testingapi.client.api.EmployeeApi.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,7 +39,7 @@ public class EmployeeFunctionalTest {
         final List<Employee> employees = generateEmployees();
 
         // when
-        employees.forEach(EmployeeApiSupport::createEmployee);
+        employees.forEach(EmployeeApi::createEmployee);
         final List<Employee> foundEmployees = getEmployees();
 
         // then

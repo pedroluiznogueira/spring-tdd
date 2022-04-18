@@ -1,4 +1,4 @@
-package com.github.pedroluiznogueira.testingapi.support.api;
+package com.github.pedroluiznogueira.testingapi.client.api;
 
 import com.github.pedroluiznogueira.testingapi.client.EmployeeClient;
 import com.github.pedroluiznogueira.testingapi.client.EmployeeClientBuilder;
@@ -6,7 +6,7 @@ import com.github.pedroluiznogueira.testingapi.model.Employee;
 
 import java.util.List;
 
-public abstract class EmployeeApiSupport {
+public abstract class EmployeeApi {
 
     private static final EmployeeClientBuilder employeeClientBuilder = new EmployeeClientBuilder();
     private static final EmployeeClient employeeClient = employeeClientBuilder.getEmployeeClient();
